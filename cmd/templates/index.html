@@ -4,12 +4,77 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tessera - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tessera — Dashboard</title>
+  <script src="/tailwindcss"></script>
+  <style>
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+  </style>
 </head>
 
-<body>
-  <h1>Welcome to the dashboard</h1>
+<body class="min-h-screen bg-stone-900 text-stone-200">
+
+  <div class="max-w-2xl mx-auto px-6 py-12">
+
+    {{/* Header */}}
+    <div class="flex items-center justify-between mb-10">
+      <div>
+        <p class="text-base tracking-[0.2em] uppercase text-stone-200">Tessera</p>
+        <p class="text-xs text-stone-500 mt-0.5">admin dashboard</p>
+      </div>
+      <form method="POST" action="/dashboard/logout">
+        <button type="submit"
+          class="text-xs text-stone-500 hover:text-stone-300 tracking-widest uppercase transition-colors">
+          Logout
+        </button>
+      </form>
+    </div>
+
+    {{/* Error */}}
+    {{if .Error}}
+    <p class="text-xs text-red-400 mb-6">{{.Error}}</p>
+    {{end}}
+
+    {{/* Create app */}}
+    <form method="POST" action="/apps" class="flex gap-2 mb-8">
+      <input name="name" type="text" placeholder="app name" required
+        class="flex-1 px-4 py-2 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
+      <button type="submit"
+        class="px-4 py-2 text-xs tracking-widest uppercase text-stone-400 border border-stone-700 rounded-lg hover:bg-stone-800 hover:text-stone-200 active:scale-[0.98] transition-all">
+        Create
+      </button>
+    </form>
+
+    {{/* App list */}}
+    {{if .Apps}}
+    <ul class="space-y-2">
+      {{range .Apps}}
+      <li class="flex items-center justify-between px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg">
+        <a href="/dashboard/apps/{{.ID}}" class="text-sm text-stone-200 hover:text-white transition-colors flex-1">
+          {{.Name}}
+        </a>
+        <form method="POST" action="/dashboard/apps/{{.ID}}/delete">
+          <button type="submit"
+            class="text-xs text-stone-600 hover:text-red-400 tracking-widest uppercase transition-colors ml-4">
+            Delete
+          </button>
+        </form>
+      </li>
+      {{end}}
+    </ul>
+    {{else}}
+    <p class="text-sm text-stone-600 text-center mt-16">No apps yet.</p>
+    {{end}}
+
+  </div>
+
 </body>
 
 </html>

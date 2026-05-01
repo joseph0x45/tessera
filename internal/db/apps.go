@@ -1,9 +1,12 @@
 package db
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/joseph0x45/tessera/internal/models"
+	"github.com/joseph0x45/tessera/internal/shared"
 )
 
 func (c *Conn) InsertApp(app *models.App) error {
@@ -36,4 +39,21 @@ func (c *Conn) DeleteApp(appID string) error {
 		return fmt.Errorf("Error while deleting app: %w", err)
 	}
 	return nil
+}
+
+func (c *Conn) GetAppByName(appName string) (*models.App, error) {
+	const query = "select * from apps where name=?"
+	app := &models.App{}
+	err := c.db.Get(app, query, appName)
+	if err == nil {
+		return app, nil
+	}
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, shared.ErrAppNotFound
+	}
+	return nil, fmt.Errorf("Error while getting app by name: %w", err)
+}
+
+func (c *Conn) AppNameIsTaken(appName string) bool {
+  return false
 }

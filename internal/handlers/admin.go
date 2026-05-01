@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/joseph0x45/goutils"
+	"github.com/joseph0x45/tessera/internal/models"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
@@ -34,7 +35,15 @@ func (h *Handler) renderAdminLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) renderAdminDashboard(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "dashboard", nil)
+	apps, err := h.conn.GetAllApps()
+	if err != nil {
+		log.Println(err.Error())
+		http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+		return
+	}
+	h.render(w, "dashboard", models.DashboardData{
+		Apps: apps,
+	})
 }
 
 func (h *Handler) processAdminLogin(w http.ResponseWriter, r *http.Request) {

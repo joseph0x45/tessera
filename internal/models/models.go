@@ -11,3 +11,8 @@ type User struct {
 	Name     string `db:"name"`
 	Password string `db:"password"`
 }
+
+type DashboardData struct {
+	Apps  []App
+	Error string
+}

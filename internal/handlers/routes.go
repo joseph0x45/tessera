@@ -8,4 +8,5 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 	r.With(h.requireAdmin).Get("/admin/dashboard", h.renderAdminDashboard)
 	r.Post("/admin/login", h.processAdminLogin)
 
+	r.Post("/apps", h.processAppCreation)
 }
