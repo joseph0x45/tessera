@@ -7,9 +7,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joseph0x45/goutils v1.0.7
 	github.com/joseph0x45/sad v1.1.0
+	golang.org/x/crypto v0.50.0
 )
 
-require (
-	github.com/mattn/go-sqlite3 v1.14.22 // indirect
-	golang.org/x/crypto v0.50.0 // indirect
-)
+require github.com/mattn/go-sqlite3 v1.14.22 // indirect
