@@ -12,6 +12,8 @@ github.com/joseph0x45/goutils v1.0.6 h1:V2JTT6iO3HEeWkaj8zCqFhoiCnGnUc9RqUWjMIeA
 github.com/joseph0x45/goutils v1.0.6/go.mod h1:LiNXbsmUXaj36jOYT9Sk8VuJYwzjXZXERAgXryiGGMA=
 github.com/joseph0x45/goutils v1.0.7 h1:k22BJDCgQIJbK2hHHodVgqRx2bb3seqEHyBPgNf1u5A=
 github.com/joseph0x45/goutils v1.0.7/go.mod h1:LiNXbsmUXaj36jOYT9Sk8VuJYwzjXZXERAgXryiGGMA=
+github.com/joseph0x45/goutils v1.0.8 h1:JpZynpbSRYil+vRRUvPo89wcVQH/dJx+T3b9rFe6pC8=
+github.com/joseph0x45/goutils v1.0.8/go.mod h1:LiNXbsmUXaj36jOYT9Sk8VuJYwzjXZXERAgXryiGGMA=
 github.com/joseph0x45/sad v1.1.0 h1:icK+eVhtBWo9KiAR5AMGdyr0Egxqbp0nXNa7bzPdMCA=
 github.com/joseph0x45/sad v1.1.0/go.mod h1:KyorAn+2m4iqYTPYD0KU7otsP++1El51QBW/AOgNCJI=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=

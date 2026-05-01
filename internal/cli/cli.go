@@ -9,17 +9,24 @@ import (
 )
 
 func printUsage() {
-	fmt.Printf(`tessera %s
+	fmt.Printf(`%s %s
 
 Usage:
-  tessera <command> [flags]
+  %s <command> [arguments]
 
 Commands:
-  version                        Print the current version
-  help                           Print this help message
-  service-file                   Generate a systemd service file
+  help                  Print this help message
+  version               Print the current version
+  setup-env             Setup the environment file
+  set-signing-secret    Set the JWT signing secret
+  set-admin-password    Set the admin password
+  service-file          Generate a systemd service file
 
-`, buildinfo.Version)
+`,
+		buildinfo.AppName,
+		buildinfo.Version,
+		buildinfo.AppName,
+	)
 }
 
 func DispatchCommands(args []string) {
@@ -33,6 +40,10 @@ func DispatchCommands(args []string) {
 		os.Exit(0)
 	case "setup-env":
 		os.Exit(setupEnv())
+	case "set-signing-secret":
+		os.Exit(SetSigningSecret(args[2:]))
+	case "set-admin-password":
+		os.Exit(SetAdminPassword(args[2:]))
 	case "version":
 		fmt.Println(buildinfo.AppName, buildinfo.Version)
 		os.Exit(0)

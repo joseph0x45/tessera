@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/joseph0x45/goutils v1.0.7
+	github.com/joseph0x45/goutils v1.0.8
 	github.com/joseph0x45/sad v1.1.0
 )
 
