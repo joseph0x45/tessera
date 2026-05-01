@@ -17,9 +17,9 @@ func (h *Handler) processAppCreation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	appName := r.FormValue("name")
-  if h.conn.AppNameIsTaken(appName){
-    h.render(w, "/admin/dashboard")
-  }
+	if h.conn.AppNameIsTaken(appName) {
+		h.render(w, "/admin/dashboard")
+	}
 	_, err := h.conn.GetAppByName(appName)
 	if !errors.Is(err, shared.ErrAppNotFound) {
 		// log.Println("Error while getting app by name:", err.Error())
