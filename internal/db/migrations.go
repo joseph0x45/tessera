@@ -19,7 +19,7 @@ var migrations = []sad.Migration{
 		SQL: `
       create table users (
         id text not null primary key,
-        app_id text not null references apps.id,
+        app_id text not null references apps(id),
         name text not null,
         password text not null,
         unique(id, name)

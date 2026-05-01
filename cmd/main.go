@@ -38,7 +38,7 @@ func init() {
 
 func main() {
 	goutils.SetAppName(buildinfo.AppName)
-  goutils.Setup()
+	goutils.Setup()
 
 	cli.DispatchCommands(os.Args)
 
@@ -67,7 +67,11 @@ func main() {
 	defer stop()
 
 	go func() {
-		log.Printf("Starting %s %s on http://0.0.0.0:%s\n", buildinfo.AppName, buildinfo.Version, port)
+		log.Printf(
+			"Starting %s %s on http://0.0.0.0:%s",
+			buildinfo.AppName, buildinfo.Version, port,
+		)
+		log.Printf("Admin dashboard http://0.0.0.0:%s/admin/dashboard", port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server startup failed (addr=%s): %v", server.Addr, err)
 		}

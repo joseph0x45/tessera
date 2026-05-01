@@ -1,0 +1,54 @@
+{{define "login"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tessera — Admin</title>
+  <script src="/tailwindcss"></script>
+  <style>
+    input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-stone-900">
+
+  <div class="w-full max-w-xs px-2">
+
+    <div class="mb-8 text-center">
+      <p class="text-stone-200 text-lg tracking-[0.2em] uppercase">Tessera</p>
+      <p class="text-stone-500 text-xs mt-1">admin</p>
+    </div>
+
+    <form method="POST" action="/admin/login">
+
+      <div class="mb-3">
+        <input id="username" name="username" type="text" placeholder="username" required
+          class="w-full px-4 py-2.5 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
+      </div>
+
+      <div class="mb-2">
+        <input id="password" name="password" type="password" placeholder="password" required
+          class="w-full px-4 py-2.5 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
+      </div>
+
+      {{if .Error}}
+      <p class="text-xs text-red-400 text-center mt-3">{{.Error}}</p>
+      {{end}}
+
+      <button type="submit"
+        class="w-full mt-5 py-2.5 text-xs tracking-widest uppercase text-stone-400 border border-stone-700 rounded-lg hover:bg-stone-800 hover:text-stone-200 active:scale-[0.98] transition-all">
+        Enter
+      </button>
+
+    </form>
+  </div>
+
+</body>
+
+</html>
+{{end}}

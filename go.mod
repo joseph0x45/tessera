@@ -10,4 +10,7 @@ require (
 	golang.org/x/crypto v0.50.0
 )
 
-require github.com/mattn/go-sqlite3 v1.14.22 // indirect
+require (
+	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+)
