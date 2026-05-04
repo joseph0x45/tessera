@@ -12,5 +12,6 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 	r.With(h.requireAdmin).Post("/apps/{id}/delete", h.processAppDeletion)
 	r.With(h.requireAdmin).Get("/apps/{id}", h.renderAppPage)
 
-	r.Post("/api/users", h.processUserCreation)
+	r.Post("/api/users/register", h.processRegistration)
+	r.Post("/api/users/login", h.processLogin)
 }

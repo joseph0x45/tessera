@@ -21,3 +21,8 @@ type MetaData struct {
 	Key   string `db:"key"`
 	Value string `db:"value"`
 }
+
+type Session struct {
+	ID            string `db:"id"`
+	SessionUserID string `db:"session_user_id"`
+}

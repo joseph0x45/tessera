@@ -48,4 +48,14 @@ var migrations = []sad.Migration{
       ('signing_secret', 'signing_secret');
     `,
 	},
+	{
+		Version: 5,
+		Name:    "sessions",
+		SQL: `
+      create table sessions (
+        id text not null primary key,
+        session_user_id text not null references users(id) on delete cascade
+      );
+    `,
+	},
 }

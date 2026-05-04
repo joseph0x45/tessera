@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/joseph0x45/tessera/internal/models"
 	"github.com/joseph0x45/tessera/internal/shared"
 )
@@ -21,7 +22,7 @@ func (c *Conn) UserExistsInApp(userName, appID string) bool {
 	return exists
 }
 
-func (c *Conn) InsertUser(user *models.User) error {
+func (c *Conn) InsertUser(user *models.User, tx *sqlx.Tx) error {
 	const query = `
     insert into users (
       id, app_id, name, password
@@ -33,10 +34,33 @@ func (c *Conn) InsertUser(user *models.User) error {
 	if c.UserExistsInApp(user.Name, user.AppID) {
 		return shared.ErrUserExistsInApp
 	}
-	if _, err := c.db.NamedExec(query, user); err != nil {
+	var err error
+	if tx != nil {
+		_, err = tx.NamedExec(query, user)
+	} else {
+		_, err = c.db.NamedExec(query, user)
+	}
+	if err != nil {
 		return fmt.Errorf("Error while inserting user: %w", err)
 	}
 	return nil
+}
+
+func (c *Conn) InsertUserAndSession(user *models.User, session *models.Session) error {
+	tx, err := c.db.Beginx()
+	if err != nil {
+		return fmt.Errorf("Error while starting transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	if err := c.InsertUser(user, tx); err != nil {
+		return err
+	}
+
+	if err := c.InsertSession(session, tx); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 func (c *Conn) GetUsersByAppID(appID string) ([]models.User, error) {
@@ -48,10 +72,10 @@ func (c *Conn) GetUsersByAppID(appID string) ([]models.User, error) {
 	return users, nil
 }
 
-func (c *Conn) GetUser(userID, appID string) (*models.User, error) {
-	const query = "select * from users where id=? and app_id=?"
+func (c *Conn) GetUserByNameAndAppID(userName, appID string) (*models.User, error) {
+	const query = "select * from users where name=? and app_id=?"
 	user := &models.User{}
-	err := c.db.Get(user, query, userID, appID)
+	err := c.db.Get(user, query, userName, appID)
 	if err == nil {
 		return user, nil
 	}
