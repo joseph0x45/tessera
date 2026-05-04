@@ -9,10 +9,11 @@ import (
 )
 
 type Handler struct {
-	conn       *db.Conn
-	templates  *template.Template
-	version    string
-	cachedApps []models.App
+	conn        *db.Conn
+	templates   *template.Template
+	version     string
+	cachedApps  []models.App
+	cachedUsers []models.User
 }
 
 func NewHandler(

@@ -18,7 +18,7 @@ func (h *Handler) requireAdmin(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("session")
 		if err != nil {
 			log.Println("Error while getting session cookie:", err.Error())
-			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		sessionID := cookie.Value
@@ -27,11 +27,11 @@ func (h *Handler) requireAdmin(next http.Handler) http.Handler {
 			if !errors.Is(err, shared.ErrValueNotFound) {
 				log.Println(err)
 			}
-			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		if sessionID != *adminSessionID {
-			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -101,5 +101,5 @@ func (h *Handler) processAdminLogin(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(100 * 365 * 24 * time.Hour),
 	}
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }

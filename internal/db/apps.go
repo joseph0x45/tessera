@@ -55,6 +55,19 @@ func (c *Conn) GetAppByName(appName string) (*models.App, error) {
 	return nil, fmt.Errorf("Error while getting app by name: %w", err)
 }
 
+func (c *Conn) GetAppByID(appID string) (*models.App, error) {
+	const query = "select * from apps where id=?"
+	app := &models.App{}
+	err := c.db.Get(app, query, appID)
+	if err == nil {
+		return app, nil
+	}
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, shared.ErrAppNotFound
+	}
+	return nil, fmt.Errorf("Error while getting app by id: %w", err)
+}
+
 func (c *Conn) AppNameIsTaken(appName string) bool {
 	exists := false
 	const query = `

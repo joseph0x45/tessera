@@ -71,7 +71,7 @@ func main() {
 			"Starting %s %s on http://0.0.0.0:%s",
 			buildinfo.AppName, buildinfo.Version, port,
 		)
-		log.Printf("Admin dashboard http://0.0.0.0:%s/admin/dashboard", port)
+		log.Printf("Admin dashboard http://0.0.0.0:%s/dashboard", port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server startup failed (addr=%s): %v", server.Addr, err)
 		}

@@ -1,17 +1,13 @@
-{{define "dashboard"}}
+{{define "app"}}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tessera — Dashboard</title>
+  <title>Tessera — {{.App.Name}}</title>
   <script src="/tailwindcss"></script>
   <style>
-    ::placeholder {
-      color: rgba(255, 255, 255, 0.2);
-    }
-
     input:focus {
       outline: none;
       border-color: rgba(255, 255, 255, 0.3);
@@ -26,8 +22,12 @@
     {{/* Header */}}
     <div class="flex items-center justify-between mb-10">
       <div>
-        <p class="text-base tracking-[0.2em] uppercase text-stone-200">Tessera</p>
-        <p class="text-xs text-stone-500 mt-0.5">admin dashboard</p>
+        <a href="/dashboard"
+          class="text-xs text-stone-500 hover:text-stone-300 tracking-widest uppercase transition-colors">
+          ← Apps
+        </a>
+        <p class="text-base tracking-[0.2em] uppercase text-stone-200 mt-2">{{.App.Name}}</p>
+        <p class="text-xs text-stone-500 mt-0.5 font-mono">{{.App.ID}}</p>
       </div>
       <form method="POST" action="/dashboard/logout">
         <button type="submit"
@@ -42,25 +42,13 @@
     <p class="text-xs text-red-400 mb-6">{{.Error}}</p>
     {{end}}
 
-    {{/* Create app */}}
-    <form method="POST" action="/apps" class="flex gap-2 mb-8">
-      <input name="name" type="text" placeholder="app name" required
-        class="flex-1 px-4 py-2 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
-      <button type="submit"
-        class="px-4 py-2 text-xs tracking-widest uppercase text-stone-400 border border-stone-700 rounded-lg hover:bg-stone-800 hover:text-stone-200 active:scale-[0.98] transition-all">
-        Create
-      </button>
-    </form>
-
-    {{/* App list */}}
-    {{if .Apps}}
+    {{/* User list */}}
+    {{if .Users}}
     <ul class="space-y-2">
-      {{range .Apps}}
+      {{range .Users}}
       <li class="flex items-center justify-between px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg">
-        <a href="/apps/{{.ID}}" class="text-sm text-stone-200 hover:text-white transition-colors flex-1">
-          {{.Name}}
-        </a>
-        <form method="POST" action="/apps/{{.ID}}/delete">
+        <span class="text-sm text-stone-200">{{.Name}}</span>
+        <form method="POST" action="/dashboard/apps/{{.AppID}}/users/{{.ID}}/delete">
           <button type="submit" onclick="return confirm('Delete {{.Name}}?')"
             class="text-xs text-stone-600 hover:text-red-400 tracking-widest uppercase transition-colors ml-4">
             Delete
@@ -70,7 +58,7 @@
       {{end}}
     </ul>
     {{else}}
-    <p class="text-sm text-stone-600 text-center mt-16">No apps yet.</p>
+    <p class="text-sm text-stone-600 text-center mt-16">No users yet.</p>
     {{end}}
 
   </div>
