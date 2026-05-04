@@ -38,3 +38,11 @@ func (c *Conn) GetMetadata(key string) (*string, error) {
 	}
 	return nil, fmt.Errorf("Error while getting metadata: %w", err)
 }
+
+func (c *Conn) ClearMetadata(key string) error {
+	const query = "delete from app_metadata where key=?"
+	if _, err := c.db.Exec(query, key); err != nil {
+		return fmt.Errorf("Error while clearing metadata: %w", err)
+	}
+	return nil
+}

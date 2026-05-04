@@ -103,3 +103,11 @@ func (h *Handler) processAdminLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
+
+func (h *Handler) processLogout(w http.ResponseWriter, r *http.Request) {
+	if err := h.conn.ClearMetadata("admin_session"); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}

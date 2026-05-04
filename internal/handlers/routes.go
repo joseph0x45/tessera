@@ -7,6 +7,7 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 	r.Post("/login", h.processAdminLogin)
 
 	r.With(h.requireAdmin).Get("/dashboard", h.renderAdminDashboard)
+	r.With(h.requireAdmin).Get("/dashboard/logout", h.processLogout)
 	r.With(h.requireAdmin).Post("/apps", h.processAppCreation)
 	r.With(h.requireAdmin).Post("/apps/{id}/delete", h.processAppDeletion)
 	r.With(h.requireAdmin).Get("/apps/{id}", h.renderAppPage)
