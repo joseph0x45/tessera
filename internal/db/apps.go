@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/joseph0x45/tessera/internal/models"
 	"github.com/joseph0x45/tessera/internal/shared"
@@ -55,5 +56,14 @@ func (c *Conn) GetAppByName(appName string) (*models.App, error) {
 }
 
 func (c *Conn) AppNameIsTaken(appName string) bool {
-  return false
+	exists := false
+	const query = `
+    select exists(select 1 from apps where name=?)
+  `
+	err := c.db.QueryRow(query, appName).Scan(&exists)
+	if err != nil {
+		log.Println("Error while checking if app name is taken:", err)
+		return false
+	}
+	return exists
 }

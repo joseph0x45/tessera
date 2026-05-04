@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/joseph0x45/tessera/internal/models"
-	"github.com/joseph0x45/tessera/internal/shared"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
@@ -18,21 +17,20 @@ func (h *Handler) processAppCreation(w http.ResponseWriter, r *http.Request) {
 	}
 	appName := r.FormValue("name")
 	if h.conn.AppNameIsTaken(appName) {
-		h.render(w, "/admin/dashboard")
-	}
-	_, err := h.conn.GetAppByName(appName)
-	if !errors.Is(err, shared.ErrAppNotFound) {
-		// log.Println("Error while getting app by name:", err.Error())
-		http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+		errorMsg := fmt.Sprintf("App+'%s'+already+exists", appName)
+		redirectURL := fmt.Sprintf("/admin/dashboard?error=%s", errorMsg)
+		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 		return
 	}
 	newApp := &models.App{
 		ID:   gonanoid.Must(),
 		Name: appName,
 	}
-	err = h.conn.InsertApp(newApp)
+	err := h.conn.InsertApp(newApp)
 	if err != nil {
 		log.Println(err.Error())
+		http.Redirect(w, r, "/admin/dashboard?error=Something+went+wrong.+Check+logs", http.StatusSeeOther)
+		return
 	}
 	http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
 	return

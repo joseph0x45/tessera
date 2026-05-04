@@ -16,7 +16,9 @@ func (c *Conn) SetMetadata(metaData *models.MetaData) error {
     )
     values (
       :key, :value
-    );
+    )
+    on conflict(key)
+    do update set value=excluded.value;
   `
 	if _, err := c.db.NamedExec(query, metaData); err != nil {
 		return fmt.Errorf("Error while inserting metadata: %w", err)

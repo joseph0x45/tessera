@@ -5,12 +5,14 @@ import (
 	"net/http"
 
 	"github.com/joseph0x45/tessera/internal/db"
+	"github.com/joseph0x45/tessera/internal/models"
 )
 
 type Handler struct {
-	conn      *db.Conn
-	templates *template.Template
-	version   string
+	conn       *db.Conn
+	templates  *template.Template
+	version    string
+	cachedApps []models.App
 }
 
 func NewHandler(
@@ -19,9 +21,10 @@ func NewHandler(
 	version string,
 ) *Handler {
 	return &Handler{
-		conn:      conn,
-		templates: templates,
-		version:   version,
+		conn:       conn,
+		templates:  templates,
+		version:    version,
+		cachedApps: nil,
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/joseph0x45/goutils"
@@ -13,10 +12,9 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-var sessions = map[string]bool{}
-
 func (h *Handler) requireAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
 		cookie, err := r.Cookie("session")
 		if err != nil {
 			log.Println("Error while getting session cookie:", err.Error())
@@ -24,7 +22,15 @@ func (h *Handler) requireAdmin(next http.Handler) http.Handler {
 			return
 		}
 		sessionID := cookie.Value
-		if !sessions[sessionID] {
+		adminSessionID, err := h.conn.GetMetadata("admin_session")
+		if err != nil {
+			if !errors.Is(err, shared.ErrValueNotFound) {
+				log.Println(err)
+			}
+			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+			return
+		}
+		if sessionID != *adminSessionID {
 			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 			return
 		}
@@ -40,11 +46,14 @@ func (h *Handler) renderAdminDashboard(w http.ResponseWriter, r *http.Request) {
 	apps, err := h.conn.GetAllApps()
 	if err != nil {
 		log.Println(err.Error())
-		http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	h.cachedApps = apps
+	urlError := r.URL.Query().Get("error")
 	h.render(w, "dashboard", models.DashboardData{
-		Apps: apps,
+		Apps:  apps,
+		Error: urlError,
 	})
 }
 
@@ -71,6 +80,17 @@ func (h *Handler) processAdminLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sessionID := gonanoid.Must()
+	err = h.conn.SetMetadata(&models.MetaData{
+		Key:   "admin_session",
+		Value: sessionID,
+	})
+	if err != nil {
+		log.Println(err)
+		h.render(w, "login", map[string]string{
+			"Error": "Something went wrong",
+		})
+		return
+	}
 	cookie := &http.Cookie{
 		Name:     "session",
 		Value:    sessionID,
