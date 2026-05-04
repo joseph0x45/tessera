@@ -16,3 +16,8 @@ type DashboardData struct {
 	Apps  []App
 	Error string
 }
+
+type MetaData struct {
+	Key   string `db:"key"`
+	Value string `db:"value"`
+}

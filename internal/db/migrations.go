@@ -26,4 +26,26 @@ var migrations = []sad.Migration{
       );
     `,
 	},
+	{
+		Version: 3,
+		Name:    "metadata",
+		SQL: `
+      create table app_metadata (
+        key text not null primary key,
+        value text not null
+      );
+    `,
+	},
+	{
+		Version: 4,
+		Name:    "seed",
+		SQL: `
+    insert into app_metadata (
+      key, value
+    )
+    values
+      ('admin_password', '$2y$10$F2WPrx9uIsY1QvC205x.euRny62xAzsdOlnT/2smlVxY/uvnHkz7K'),
+      ('signing_secret', 'signing_secret');
+    `,
+	},
 }

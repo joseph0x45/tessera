@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/joseph0x45/goutils"
 	"github.com/joseph0x45/tessera/internal/models"
+	"github.com/joseph0x45/tessera/internal/shared"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
@@ -51,24 +53,24 @@ func (h *Handler) processAdminLogin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	username := r.FormValue("username")
 	password := r.FormValue("password")
-	adminUsername := os.Getenv("DASHBOARD_USER")
-	adminPasswordHash := os.Getenv("DASHBOARD_PASSWORD_HASH")
-	if username != adminUsername {
+	adminPasswordHash, err := h.conn.GetMetadata("admin_password")
+	if err != nil {
+		if !errors.Is(err, shared.ErrValueNotFound) {
+			log.Println(err.Error())
+		}
 		h.render(w, "login", map[string]string{
-			"Error": "Username not found",
+			"Error": "Something went wrong",
 		})
 		return
 	}
-	if !goutils.HashMatchesPassword(adminPasswordHash, password) {
+	if !goutils.HashMatchesPassword(*adminPasswordHash, password) {
 		h.render(w, "login", map[string]string{
-			"Error": "Invalid credentials",
+			"Error": "Invalid password",
 		})
 		return
 	}
 	sessionID := gonanoid.Must()
-	sessions[sessionID] = true
 	cookie := &http.Cookie{
 		Name:     "session",
 		Value:    sessionID,
