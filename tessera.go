@@ -112,7 +112,9 @@ func (c *TesseraClient) GetUserInfo(username string) (*UserInfo, error) {
 	return nil, nil
 }
 
-func (c *TesseraClient) GetSessionUserInfo(sessionID string) (*UserInfo, error)
+func (c *TesseraClient) GetSessionUserInfo(sessionID string) (*UserInfo, error) {
+	panic("NOT_IMPLEMENTED")
+}
 
 func (c *TesseraClient) Delete(username string) error {
 	return nil
