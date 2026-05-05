@@ -136,7 +136,3 @@ func (c *TesseraClient) Delete(username string) error {
 		return fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
 	}
 }
-
-func (c *TesseraClient) DeleteSessionUser() error {
-	return nil
-}
