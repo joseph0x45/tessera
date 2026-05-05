@@ -36,14 +36,14 @@ func getErr(res *http.Response) error {
 	return ErrMap[errorMessage]
 }
 
-func getSessionID(res *http.Response) string {
+func getAuthResponse(res *http.Response) *AuthResponse {
 	defer res.Body.Close()
-	result := map[string]string{}
-	json.NewDecoder(res.Body).Decode(&result)
-	return result["session_id"]
+	authResponse := &AuthResponse{}
+	json.NewDecoder(res.Body).Decode(authResponse)
+	return authResponse
 }
 
-func (c *TesseraClient) Register(username, password string) (string, error) {
+func (c *TesseraClient) Register(username, password string) (*AuthResponse, error) {
 	requestURL := fmt.Sprintf("%s/api/users/register", c.TesseraServerURL)
 	body, err := json.Marshal(map[string]any{
 		"app_id":   c.TesseraAppID,
@@ -51,32 +51,32 @@ func (c *TesseraClient) Register(username, password string) (string, error) {
 		"password": password,
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewReader(body))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	switch res.StatusCode {
 	case http.StatusInternalServerError:
-		return "", ErrServer
+		return nil, ErrServer
 	case http.StatusBadRequest:
-		return "", getErr(res)
+		return nil, getErr(res)
 	case http.StatusConflict:
-		return "", getErr(res)
+		return nil, getErr(res)
 	case http.StatusCreated:
-		return getSessionID(res), nil
+		return getAuthResponse(res), nil
 	default:
-		return "", fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
+		return nil, fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
 	}
 }
 
-func (c *TesseraClient) Login(username, password string) (string, error) {
+func (c *TesseraClient) Login(username, password string) (*AuthResponse, error) {
 	requestURL := fmt.Sprintf("%s/api/users/login", c.TesseraServerURL)
 	body, err := json.Marshal(map[string]any{
 		"app_id":   c.TesseraAppID,
@@ -84,31 +84,57 @@ func (c *TesseraClient) Login(username, password string) (string, error) {
 		"password": password,
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewReader(body))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	switch res.StatusCode {
 	case http.StatusInternalServerError:
-		return "", ErrServer
+		return nil, ErrServer
 	case http.StatusBadRequest:
-		return "", getErr(res)
+		return nil, getErr(res)
 	case http.StatusOK:
-		return getSessionID(res), nil
+		return getAuthResponse(res), nil
 	default:
-		return "", fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
+		return nil, fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
 	}
 }
 
 func (c *TesseraClient) Delete(username string) error {
-	return nil
+	requestURL := fmt.Sprintf("%s/api/users", c.TesseraServerURL)
+	body, err := json.Marshal(map[string]any{
+		"app_id":   c.TesseraAppID,
+		"username": username,
+	})
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodDelete, requestURL, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	switch res.StatusCode {
+	case http.StatusInternalServerError:
+		return ErrServer
+	case http.StatusBadRequest:
+		return getErr(res)
+	case http.StatusOK:
+		return nil
+	default:
+		return fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
+	}
 }
 
 func (c *TesseraClient) DeleteSessionUser() error {

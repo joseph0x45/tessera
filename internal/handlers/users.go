@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/joseph0x45/goutils"
 	"github.com/joseph0x45/tessera/internal/models"
 	"github.com/joseph0x45/tessera/internal/shared"
@@ -80,6 +79,8 @@ func (h *Handler) processRegistration(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{
 		"session_id": newSession.ID,
+		"user_id":    newUser.ID,
+		"username":   newUser.Name,
 	})
 }
 
@@ -151,19 +152,39 @@ func (h *Handler) processLogin(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"session_id": newSession.ID,
+		"user_id":    user.ID,
+		"username":   user.Name,
 	})
 }
 
 func (h *Handler) processUserDeletion(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "id")
-	if err := h.conn.DeleteUser(userID); err != nil {
+	payload := &struct {
+		AppID    string `json:"app_id"`
+		UserName string `json:"username"`
+	}{}
+	if err := json.NewDecoder(r.Body).Decode(payload); err != nil {
+		log.Println("Error while decoding request body:", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	user, err := h.conn.GetUserByNameAndAppID(payload.UserName, payload.AppID)
+	if err != nil {
+		if errors.Is(err, shared.ErrUserNotFound) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := h.conn.DeleteUser(user.ID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-}
-
-func (h *Handler) processUserInfoRequest(w http.ResponseWriter, r *http.Request) {
-
 }

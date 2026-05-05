@@ -14,4 +14,5 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 
 	r.Post("/api/users/register", h.processRegistration)
 	r.Post("/api/users/login", h.processLogin)
+	r.Delete("/api/users", h.processUserDeletion)
 }

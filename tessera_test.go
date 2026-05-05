@@ -8,6 +8,9 @@ import (
 	"github.com/joseph0x45/tessera"
 )
 
+const MAIN_APP_ID = "I5paDtMQOjfdHaO9VnKsc"
+const SECONDARY_APP_ID = "5xkeKo7B8NGkk5VPnXxzq"
+
 func TestCreateUserEmptyParameters(t *testing.T) {
 	serverURL := "http://localhost:8080"
 	appID := ""
@@ -40,22 +43,22 @@ func TestCreateUserInvalidAppID(t *testing.T) {
 
 func TestCreateUser(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "JZeQtGf7WZ5lfaBD4B8OM"
+	appID := MAIN_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "test"
 	password := "test"
-	sessionID, err := client.Register(username, password)
+	authResponse, err := client.Register(username, password)
 	if err != nil {
 		log.Fatal("Expected err to be nil but got", err.Error())
 	}
-	if sessionID == "" {
-		log.Fatal("Expected sessionID not to be empty")
+	if authResponse == nil {
+		log.Fatal("Expected sessionID not to be nil")
 	}
 }
 
 func TestCreateUserSameUsername(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "JZeQtGf7WZ5lfaBD4B8OM"
+	appID := MAIN_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "test"
 	password := "test"
@@ -100,7 +103,7 @@ func TestLoginInvalidAppID(t *testing.T) {
 
 func TestLoginWrongAppID(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "BJ23FC4zVlCRV33mKfG9k"
+	appID := SECONDARY_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "test"
 	password := "test"
@@ -113,9 +116,9 @@ func TestLoginWrongAppID(t *testing.T) {
 	}
 }
 
-func TestLoginWrongUsername(t *testing.T){
+func TestLoginWrongUsername(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "JZeQtGf7WZ5lfaBD4B8OM"
+	appID := MAIN_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "teste"
 	password := "test"
@@ -128,9 +131,9 @@ func TestLoginWrongUsername(t *testing.T){
 	}
 }
 
-func TestLoginWrongPassword(t *testing.T){
+func TestLoginWrongPassword(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "JZeQtGf7WZ5lfaBD4B8OM"
+	appID := MAIN_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "test"
 	password := "testee"
@@ -145,15 +148,26 @@ func TestLoginWrongPassword(t *testing.T){
 
 func TestLogin(t *testing.T) {
 	serverURL := "http://localhost:8080"
-	appID := "JZeQtGf7WZ5lfaBD4B8OM"
+	appID := MAIN_APP_ID
 	client := tessera.Client(serverURL, appID)
 	username := "test"
 	password := "test"
-	sessionID, err := client.Login(username, password)
+	authResponse, err := client.Login(username, password)
 	if err != nil {
 		log.Fatal("Expected err to be nil")
 	}
-  if sessionID == ""{
-    log.Fatal("Expected sessionID not to be empty")
-  }
+	if authResponse == nil {
+		log.Fatal("Expected sessionID not to be empty")
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	serverURL := "http://localhost:8080"
+	appID := MAIN_APP_ID
+	client := tessera.Client(serverURL, appID)
+	username := "test"
+	err := client.Delete(username)
+	if err != nil {
+		log.Fatal("Expected err to be nil")
+	}
 }
