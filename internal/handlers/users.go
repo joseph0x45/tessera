@@ -163,3 +163,7 @@ func (h *Handler) processUserDeletion(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+
+func (h *Handler) processUserInfoRequest(w http.ResponseWriter, r *http.Request) {
+
+}

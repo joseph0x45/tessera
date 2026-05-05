@@ -8,11 +8,10 @@ import (
 	"time"
 )
 
-type UserInfo struct {
-	ID       string         `json:"id"`
-	Username string         `json:"username"`
-	Password string         `json:"password"`
-	Metadata map[string]any `json:"metadata"` //NOT_IMPLEMENTED_YET
+type AuthResponse struct {
+	SessionID string `json:"session_id"`
+	UserID    string `json:"user_id"`
+	Username  string `json:"username"`
 }
 
 type TesseraClient struct {
@@ -106,14 +105,6 @@ func (c *TesseraClient) Login(username, password string) (string, error) {
 	default:
 		return "", fmt.Errorf("Tessera: Unexpected status %d", res.StatusCode)
 	}
-}
-
-func (c *TesseraClient) GetUserInfo(username string) (*UserInfo, error) {
-	return nil, nil
-}
-
-func (c *TesseraClient) GetSessionUserInfo(sessionID string) (*UserInfo, error) {
-	panic("NOT_IMPLEMENTED")
 }
 
 func (c *TesseraClient) Delete(username string) error {
