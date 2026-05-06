@@ -8,9 +8,11 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 
 	r.With(h.requireAdmin).Get("/dashboard", h.renderAdminDashboard)
 	r.With(h.requireAdmin).Get("/dashboard/logout", h.processLogout)
-	r.With(h.requireAdmin).Post("/apps", h.processAppCreation)
-	r.With(h.requireAdmin).Post("/apps/{id}/delete", h.processAppDeletion)
-	r.With(h.requireAdmin).Get("/apps/{id}", h.renderAppPage)
+	r.With(h.requireAdmin).Post("/dashboard/apps", h.processAppCreation)
+	r.With(h.requireAdmin).Get("/dashboard/apps/{id}", h.renderAppPage)
+	r.With(h.requireAdmin).Post("/dashboard/apps/{id}/delete", h.processAppDeletion)
+	r.With(h.requireAdmin).Post("/dashboard/apps/{id}/users", h.processUserCreation)
+	r.With(h.requireAdmin).Post("/dashboard/apps/{appID}/users/{userID}/delete", h.processUserDeletionFromDashboard)
 
 	r.Post("/api/users/register", h.processRegistration)
 	r.Post("/api/users/login", h.processLogin)

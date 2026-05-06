@@ -43,7 +43,7 @@
     {{end}}
 
     {{/* Create app */}}
-    <form method="POST" action="/apps" class="flex gap-2 mb-8">
+    <form method="POST" action="/dashboard/apps" class="flex gap-2 mb-8">
       <input name="name" type="text" placeholder="app name" required
         class="flex-1 px-4 py-2 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
       <button type="submit"
@@ -57,10 +57,10 @@
     <ul class="space-y-2">
       {{range .Apps}}
       <li class="flex items-center justify-between px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg">
-        <a href="/apps/{{.ID}}" class="text-sm text-stone-200 hover:text-white transition-colors flex-1">
+        <a href="/dashboard/apps/{{.ID}}" class="text-sm text-stone-200 hover:text-white transition-colors flex-1">
           {{.Name}}
         </a>
-        <form method="POST" action="/apps/{{.ID}}/delete">
+        <form method="POST" action="/dashboard/apps/{{.ID}}/delete">
           <button type="submit" onclick="return confirm('Delete {{.Name}}?')"
             class="text-xs text-stone-600 hover:text-red-400 tracking-widest uppercase transition-colors ml-4">
             Delete

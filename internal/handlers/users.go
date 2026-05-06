@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/joseph0x45/goutils"
 	"github.com/joseph0x45/tessera/internal/models"
 	"github.com/joseph0x45/tessera/internal/shared"
@@ -187,4 +189,58 @@ func (h *Handler) processUserDeletion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) processUserCreation(w http.ResponseWriter, r *http.Request) {
+	appID := chi.URLParam(r, "id")
+	baseRedirectURL := fmt.Sprintf("/dashboard/apps/%s", appID)
+
+	if err := r.ParseForm(); err != nil {
+		log.Println("Error while parsing form", err.Error())
+		http.Redirect(w, r, baseRedirectURL+"?error=Something+went+wrong.+Check+logs", http.StatusSeeOther)
+		return
+	}
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	hash, err := goutils.HashPassword(password)
+	if err != nil {
+		log.Println(err)
+		http.Redirect(
+			w, r, baseRedirectURL+"?error=Something+went+wrong.",
+			http.StatusSeeOther,
+		)
+		return
+	}
+	newUser := &models.User{
+		ID:       gonanoid.Must(),
+		AppID:    appID,
+		Name:     username,
+		Password: hash,
+	}
+	if err := h.conn.InsertUser(newUser, nil); err != nil {
+		if errors.Is(err, shared.ErrUserExistsInApp) {
+			errMsg := fmt.Sprintf(
+				"?error=User+'%s'+already+exists",
+				username,
+			)
+			http.Redirect(w, r, baseRedirectURL+errMsg, http.StatusSeeOther)
+			return
+		}
+		log.Println(err)
+		http.Redirect(w, r, baseRedirectURL+"?error=Something+went+wrong.", http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, baseRedirectURL, http.StatusSeeOther)
+}
+
+func (h *Handler) processUserDeletionFromDashboard(w http.ResponseWriter, r *http.Request) {
+	appID := chi.URLParam(r, "appID")
+	userID := chi.URLParam(r, "userID")
+	baseRedirectURL := fmt.Sprintf("/dashboard/apps/%s", appID)
+	if err := h.conn.DeleteUser(userID); err != nil {
+		log.Println(err)
+		http.Redirect(w, r, baseRedirectURL+"?error=Something+went+wrong.+Check+logs", http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, baseRedirectURL, http.StatusSeeOther)
 }

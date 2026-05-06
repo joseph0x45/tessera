@@ -8,6 +8,10 @@
   <title>Tessera — {{.App.Name}}</title>
   <script src="/tailwindcss"></script>
   <style>
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
     input:focus {
       outline: none;
       border-color: rgba(255, 255, 255, 0.3);
@@ -29,7 +33,7 @@
         <p class="text-base tracking-[0.2em] uppercase text-stone-200 mt-2">{{.App.Name}}</p>
         <p class="text-xs text-stone-500 mt-0.5 font-mono">{{.App.ID}}</p>
       </div>
-      <form action="/dashboard/logout">
+      <form method="POST" action="/dashboard/logout">
         <button type="submit"
           class="text-xs text-stone-500 hover:text-stone-300 tracking-widest uppercase transition-colors">
           Logout
@@ -41,6 +45,18 @@
     {{if .Error}}
     <p class="text-xs text-red-400 mb-6">{{.Error}}</p>
     {{end}}
+
+    {{/* Create user */}}
+    <form method="POST" action="/dashboard/apps/{{.App.ID}}/users" class="flex gap-2 mb-8">
+      <input name="username" type="text" placeholder="username" required
+        class="flex-1 px-4 py-2 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
+      <input name="password" type="password" placeholder="password" required
+        class="w-36 px-4 py-2 text-sm bg-stone-800 border border-stone-700 rounded-lg text-stone-100 transition-colors">
+      <button type="submit"
+        class="px-4 py-2 text-xs tracking-widest uppercase text-stone-400 border border-stone-700 rounded-lg hover:bg-stone-800 hover:text-stone-200 active:scale-[0.98] transition-all">
+        Add
+      </button>
+    </form>
 
     {{/* User list */}}
     {{if .Users}}

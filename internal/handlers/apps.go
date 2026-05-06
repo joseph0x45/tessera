@@ -47,6 +47,7 @@ func (h *Handler) processAppDeletion(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) renderAppPage(w http.ResponseWriter, r *http.Request) {
 	appID := chi.URLParam(r, "id")
+	urlError := r.URL.Query().Get("error")
 	app, err := h.conn.GetAppByID(appID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,6 +62,6 @@ func (h *Handler) renderAppPage(w http.ResponseWriter, r *http.Request) {
 	h.render(w, "app", map[string]any{
 		"Users": h.cachedUsers,
 		"App":   app,
-		"Error": "",
+		"Error": urlError,
 	})
 }
