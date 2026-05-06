@@ -1,0 +1,23 @@
+[Unit]
+Description= Centralized username/password auth API with a Go client library and admin dashboard 
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+
+User=joseph
+
+EnvironmentFile=-/home/joseph/.config/tessera/conf
+
+ExecStart=/usr/local/bin/tessera
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
